@@ -170,27 +170,3 @@ with real people's devices.
 
 </sub>
 </div>
-
----
-
-## What's in this repository
-
-```
-README.md            this page
-assets/              source images — my portrait, the logo, the people in my story
-papers/              the nine research papers
-pappers/             the same papers, original filenames (build source)
-portfolio/           my personal site, ready to deploy
-github-profile/      a standalone README for my GitHub profile
-```
-
-### Running the site
-
-`portfolio/` is a static site with no build step and no dependencies. Open
-`portfolio/index.html` in a browser, or drop the folder on any static host —
-Netlify, Vercel, GitHub Pages — and it works as-is. The only external request is
-the Google Fonts stylesheet.
-
-Everything in it is hand-written: one HTML file, an inline stylesheet, and a
-single script that drives the opening sequence, the parallax, the scroll-linked
-nav and the animated circuit background.

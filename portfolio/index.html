@@ -1,0 +1,1986 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Ardit Berisha - AI researcher, software engineer, CTO and co-founder of Amaro Than Platforms LLC.">
+<style>
+  :root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+  body{margin:0}
+  img{max-width:100%}
+  [hidden]{display:none!important}
+</style>
+<title>Ardit Berisha</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="320x320" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=JetBrains+Mono:wght@400;500&display=swap">
+
+<style>
+/* ============================================================
+   TOKENS
+   ============================================================ */
+:root{
+  /* blues: two paper tints, four inks, three accents */
+  --ground:#EEF1F9;
+  --ground-2:#E2E8F4;
+  --plate:#D1DAEE;
+  --text:#0C1324;
+  --text-2:#38455F;
+  --text-3:#66738E;
+  --rule:#C2CCE2;
+  --rule-soft:#D3DAEA;
+  --accent:#1B3BD6;
+  --accent-2:#3E63E8;
+  --ember:#D2560B;
+  --accent-soft:rgba(27,59,214,.09);
+  --accent-ink:#F2F5FC;
+
+  --f-display:"Archivo","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --f-body:"Newsreader",Iowan Old Style,Georgia,"Times New Roman",serif;
+  --f-data:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+
+  --ease:cubic-bezier(.16,1,.3,1);
+  --gutter:clamp(20px,5vw,72px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#080C15; --ground-2:#0D1221; --plate:#161F34;
+    --text:#E7ECF7; --text-2:#A2AECB; --text-3:#6D7A9B;
+    --rule:#1E2843; --rule-soft:#161F36;
+    --accent:#5480FF; --accent-2:#8CADFF; --ember:#FF7A2F;
+    --accent-soft:rgba(84,128,255,.14); --accent-ink:#060911;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#080C15; --ground-2:#0D1221; --plate:#161F34;
+  --text:#E7ECF7; --text-2:#A2AECB; --text-3:#6D7A9B;
+  --rule:#1E2843; --rule-soft:#161F36;
+  --accent:#5480FF; --accent-2:#8CADFF; --ember:#FF7A2F;
+  --accent-soft:rgba(84,128,255,.14); --accent-ink:#060911;
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0;background:var(--ground);color:var(--text);
+  font-family:var(--f-body);
+  font-size:clamp(16.5px,1.02vw,18px);
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+a{color:inherit}
+p{margin:0}
+h1,h2,h3,h4{font-family:var(--f-display);font-weight:700;margin:0;text-wrap:balance;letter-spacing:-.025em;line-height:1.08}
+/* height:auto is required — without it an HTML height attribute stretches the image */
+img{display:block;max-width:100%;height:auto}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+
+/* ============================================================
+   INTRO — the opening card, before the page settles
+   ============================================================ */
+.intro{
+  position:fixed;inset:0;z-index:200;
+  background:var(--ground);
+  display:flex;align-items:center;justify-content:center;
+}
+.intro__inner{
+  display:flex;flex-direction:column;align-items:center;
+  gap:clamp(18px,2.4vw,26px);
+  padding-inline:var(--gutter);
+}
+.intro__fig{
+  margin:0;overflow:hidden;
+  background:var(--plate);border:1px solid var(--rule);
+  will-change:transform;
+}
+.intro__fig img{
+  width:100%;height:100%;object-fit:cover;object-position:center 18%;
+  filter:grayscale(1) contrast(1.06);
+}
+.intro__name{
+  font-family:var(--f-display);font-weight:800;
+  font-size:clamp(23px,3.6vw,38px);letter-spacing:-.045em;line-height:1;
+  text-align:center;
+}
+.intro__born{
+  font-family:var(--f-data);font-size:10.5px;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--text-3);text-align:center;
+}
+/* the hero portrait holds its space while the intro copy is in flight */
+.hero__portrait.is-waiting{visibility:hidden}
+
+/* the circuit runs behind everything; content sits on its own layer */
+#trace{
+  position:fixed;inset:0;width:100%;height:100%;
+  z-index:0;pointer-events:none;
+}
+header,main,footer{position:relative;z-index:1}
+
+.wrap{max-width:1180px;margin-inline:auto;padding-inline:var(--gutter)}
+.band{padding-block:clamp(64px,9vw,128px);border-top:1px solid var(--rule-soft)}
+/* slightly translucent, so the circuit carries through instead of hard-stopping */
+.band--plate{background:color-mix(in srgb,var(--ground-2) 91%,transparent)}
+.band--plate .box{border-color:var(--rule)}
+
+.sec-head{margin-bottom:clamp(30px,4vw,54px);max-width:52ch}
+.sec-head h2{font-size:clamp(28px,4.2vw,48px);letter-spacing:-.036em}
+.sec-head p{margin-top:16px;color:var(--text-2)}
+
+/* ============================================================
+   MASTHEAD
+   ============================================================ */
+.masthead{
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:60;
+  background:color-mix(in srgb,var(--ground) 88%,transparent);
+  backdrop-filter:saturate(1.4) blur(14px);
+  -webkit-backdrop-filter:saturate(1.4) blur(14px);
+  border-bottom:1px solid var(--rule-soft);
+}
+.masthead__bar{
+  display:flex;align-items:center;gap:22px;
+  max-width:1180px;margin-inline:auto;padding:11px var(--gutter);
+}
+/* the mark: a reactor core and a callsign */
+.mark{display:flex;align-items:center;gap:11px;text-decoration:none;white-space:nowrap}
+.mark__core{position:relative;width:34px;height:34px;flex:none}
+/* the face, as the mark */
+.mark__face{
+  position:absolute;inset:3px;
+  width:calc(100% - 6px);height:calc(100% - 6px);
+  border-radius:50%;object-fit:cover;
+  background:#FFFFFF;
+  transition:transform .5s var(--ease);
+}
+.mark:hover .mark__face{transform:scale(1.06)}
+/* the reactor ring, still turning around it */
+.mark__ring{
+  position:absolute;inset:0;display:block;width:100%;height:100%;overflow:visible;
+}
+.mark__ring .ring-o{
+  fill:none;stroke:var(--accent);stroke-width:1.5;stroke-dasharray:4 5.2;
+  transform-origin:20px 20px;animation:reactorSpin 17s linear infinite;
+}
+.mark__ring .ring-i{
+  fill:none;stroke:var(--accent-2);stroke-width:1;stroke-dasharray:1.6 3.4;opacity:.7;
+  transform-origin:20px 20px;animation:reactorSpin 9s linear infinite reverse;
+}
+@keyframes reactorSpin{to{transform:rotate(360deg)}}
+
+.mark__type{display:block}
+.mark__name{
+  display:block;font-family:var(--f-display);font-weight:800;
+  font-size:13px;letter-spacing:.17em;line-height:1;
+  text-transform:uppercase;color:var(--text);
+}
+.mark__tag{
+  display:block;margin-top:5px;
+  font-family:var(--f-data);font-size:8px;letter-spacing:.26em;
+  text-transform:uppercase;color:var(--text-3);
+  transition:color .3s var(--ease);
+}
+.mark:hover .mark__tag{color:var(--accent-2)}
+
+.masthead__nav{display:flex;gap:21px;margin-left:auto;align-items:center}
+.masthead__nav a{
+  position:relative;padding-block:7px;
+  font-family:var(--f-display);font-size:13px;font-weight:550;
+  letter-spacing:.02em;
+  color:var(--text-3);text-decoration:none;transition:color .3s var(--ease);
+}
+.masthead__nav a::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:1.5px;
+  background:var(--accent);
+  transform:scaleX(0);transform-origin:left center;
+  transition:transform .42s var(--ease);
+}
+.masthead__nav a:hover{color:var(--text)}
+.masthead__nav a:hover::after{transform:scaleX(1)}
+.masthead__nav a.on{color:var(--text)}
+.masthead__nav a.on::after{transform:scaleX(1)}
+@media (prefers-reduced-motion:reduce){
+  .mark__ring .ring-o,.mark__ring .ring-i{animation:none}
+}
+@media (max-width:760px){.masthead__nav a[data-optional]{display:none}}
+.progress{height:2px;position:relative;overflow:hidden}
+.progress__fill{position:absolute;inset:0 auto 0 0;width:0%;background:var(--accent)}
+
+/* ============================================================
+   HERO — deliberately sparse
+   ============================================================ */
+.hero{padding-block:clamp(44px,7vw,84px) clamp(52px,7vw,90px)}
+.hero__grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,.66fr);
+  column-gap:clamp(30px,5vw,76px);
+  grid-template-areas:
+    "name  photo"
+    "born  photo"
+    "lede  photo"
+    "spec  photo"
+    "acts  photo";
+  align-items:start;
+}
+@media (max-width:880px){
+  .hero__grid{
+    grid-template-columns:1fr;
+    grid-template-areas:"name" "born" "photo" "lede" "spec" "acts";
+  }
+}
+/* same treatment as the opening card, so the two read as one thought */
+.hero__born{
+  grid-area:born;margin-top:18px;
+  font-family:var(--f-data);font-size:10.5px;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--text-3);
+}
+.hero__name{
+  grid-area:name;
+  font-size:clamp(50px,9.4vw,124px);font-weight:800;
+  letter-spacing:-.05em;line-height:.88;
+}
+.hero__lede{grid-area:lede}
+.spec{grid-area:spec}
+.acts{grid-area:acts}
+
+/* the face, first thing */
+.hero__portrait{
+  grid-area:photo;margin:0;align-self:center;
+  position:relative;overflow:hidden;
+  background:var(--plate);border:1px solid var(--rule);
+}
+.hero__portrait img{
+  width:100%;height:clamp(360px,42vw,560px);
+  object-fit:cover;object-position:center 18%;
+  filter:grayscale(1) contrast(1.06);
+}
+@media (max-width:880px){
+  .hero__portrait{margin-top:clamp(26px,4vw,36px);max-width:460px}
+  .hero__portrait img{height:clamp(320px,72vw,430px)}
+}
+.hero__name .ln{display:block;overflow:hidden}
+.hero__name .ln i{display:block;font-style:normal}
+.hero__lede{
+  margin-top:clamp(20px,2.3vw,30px);
+  max-width:40ch;
+  font-size:clamp(18px,1.9vw,23px);
+  line-height:1.48;color:var(--text-2);
+}
+.hero__lede b{color:var(--text);font-weight:600;font-family:var(--f-display);letter-spacing:-.015em}
+
+.spec{
+  display:flex;flex-wrap:wrap;margin:clamp(32px,4vw,48px) 0 0;
+  border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+}
+.spec > div{padding:16px 28px 17px 0;margin-right:28px;border-right:1px solid var(--rule-soft)}
+.spec > div:last-child{border-right:0;margin-right:0;padding-right:0}
+.spec dt{font-family:var(--f-display);font-size:11.5px;font-weight:500;color:var(--text-3)}
+.spec dd{
+  margin:8px 0 0;font-family:var(--f-display);font-weight:700;
+  font-size:clamp(19px,2.3vw,27px);letter-spacing:-.035em;line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+.spec dd span{font-family:var(--f-body);font-weight:400;font-style:italic;font-size:.6em;color:var(--text-3);padding:0 2px}
+@media (max-width:560px){.spec > div{padding-right:18px;margin-right:18px}}
+
+.acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:clamp(30px,3.6vw,42px)}
+.btn{
+  display:inline-flex;align-items:center;gap:9px;
+  font-family:var(--f-display);font-size:14px;font-weight:600;
+  padding:11px 18px;border-radius:999px;text-decoration:none;
+  border:1px solid var(--rule);color:var(--text);
+  transition:transform .4s var(--ease),border-color .3s var(--ease);
+}
+.btn:hover{transform:translateY(-2px);border-color:var(--text-3)}
+.btn--solid{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn svg{width:15px;height:15px;flex:none}
+
+/* ============================================================
+   INFLUENCES — large plates that cross-dissolve with parallax.
+   Default (no JS / mobile / reduced motion) is a stacked list.
+   ============================================================ */
+/* no overflow on this element: a clipping ancestor breaks the sticky stage */
+.infl{border-top:1px solid var(--rule-soft);background:var(--ground-2)}
+.infl__head{padding-block:clamp(56px,8vw,104px) clamp(30px,4vw,52px)}
+.infl__head h2{font-size:clamp(28px,4.2vw,48px);letter-spacing:-.036em;max-width:16ch}
+.infl__head p{margin-top:15px;color:var(--text-2);max-width:46ch}
+
+.scenes{display:block}
+.scene{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,.78fr);
+  align-items:center;
+  gap:clamp(26px,4.5vw,76px);
+  max-width:1180px;margin-inline:auto;
+  padding-inline:var(--gutter);
+  padding-block:clamp(34px,5vw,60px);
+}
+@media (max-width:860px){
+  .scene{grid-template-columns:1fr;gap:24px}
+  .scene__fig{order:-1}
+}
+.scene__n{
+  font-family:var(--f-data);font-size:11px;color:var(--text-3);
+  font-variant-numeric:tabular-nums;
+}
+.scene__who{
+  margin-top:10px;font-family:var(--f-data);font-size:11px;color:var(--accent-2);
+}
+.scene__name{
+  margin-top:12px;
+  font-size:clamp(40px,6.6vw,92px);font-weight:800;
+  letter-spacing:-.05em;line-height:.93;
+}
+.scene__impact{
+  margin-top:clamp(18px,2vw,26px);
+  max-width:40ch;color:var(--text-2);
+  font-size:clamp(16.5px,1.5vw,20px);line-height:1.55;
+}
+.scene__fig{margin:0;position:relative;overflow:hidden;background:var(--plate);border:1px solid var(--rule)}
+.scene__fig img{
+  width:100%;height:clamp(300px,52vw,600px);object-fit:cover;object-position:center 22%;
+  filter:grayscale(1) contrast(1.06);
+}
+.scene--prime .scene__fig{border-color:var(--accent)}
+
+/* live mode: pinned, cross-dissolving, parallaxed */
+.infl--live .infl__scroll{position:relative}
+.infl--live .infl__stage{
+  position:sticky;top:0;height:100svh;min-height:600px;overflow:hidden;
+}
+.infl--live .scenes{position:absolute;inset:0}
+.infl--live .scene{
+  position:absolute;inset:0;
+  align-content:center;
+  padding-block:0;
+  padding-inline:max(var(--gutter),calc((100% - 1180px) / 2));
+  will-change:opacity;
+}
+.infl--live .scene__fig{height:min(74svh,620px)}
+.infl--live .scene__fig img{height:118%;margin-top:-9%;will-change:transform}
+.infl--live .scene__text{will-change:transform}
+
+/* which of the seven you are on */
+.infl__ticks{display:none}
+.infl--live .infl__ticks{
+  display:flex;align-items:center;gap:7px;
+  position:absolute;left:max(var(--gutter),calc((100% - 1180px) / 2));
+  bottom:clamp(24px,5vh,54px);z-index:5;
+}
+.infl__tick{width:22px;height:2px;background:var(--rule);transition:background-color .4s var(--ease)}
+.infl__tick.on{background:var(--accent)}
+.infl__count{
+  font-family:var(--f-data);font-size:11px;color:var(--text-3);
+  margin-left:10px;font-variant-numeric:tabular-nums;
+}
+
+/* ============================================================
+   CREED — the one thing on this page set as a statement
+   ============================================================ */
+.creed{padding-block:clamp(66px,10vw,140px)}
+.creed__lead{
+  font-family:var(--f-display);font-weight:800;
+  font-size:clamp(30px,5.4vw,62px);line-height:1.02;
+  letter-spacing:-.045em;max-width:17ch;text-wrap:balance;
+}
+.creed__hit{
+  margin-top:clamp(26px,3.4vw,44px);
+  font-family:var(--f-display);font-weight:700;
+  font-size:clamp(20px,2.7vw,33px);line-height:1.22;
+  letter-spacing:-.03em;color:var(--accent);
+  max-width:24ch;text-wrap:balance;
+}
+.creed__body{
+  margin-top:clamp(22px,2.6vw,32px);
+  max-width:54ch;color:var(--text-2);
+}
+@media (max-width:640px){
+  .creed{padding-block:52px}
+  .creed__lead{font-size:clamp(27px,8.4vw,38px)}
+  .creed__hit{font-size:19px;margin-top:22px}
+  .creed__body{margin-top:18px;font-size:16px}
+}
+
+/* ============================================================
+   BOXES — ventures and repositories
+   ============================================================ */
+.boxes{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));
+  gap:clamp(13px,1.5vw,18px);
+}
+.box{
+  border:1px solid var(--rule);background:var(--ground);
+  padding:clamp(20px,2.3vw,28px);
+  display:flex;flex-direction:column;
+  text-decoration:none;color:inherit;
+  transition:border-color .35s var(--ease),transform .45s var(--ease);
+}
+.band--plate .box{background:var(--ground-2)}
+a.box:hover{border-color:var(--accent);transform:translateY(-3px)}
+.box__t{font-size:clamp(19px,2vw,23px);letter-spacing:-.03em;line-height:1.14;font-weight:700}
+.box__meta{
+  margin-top:9px;font-family:var(--f-data);font-size:10.5px;
+  color:var(--accent-2);line-height:1.5;
+}
+.box__d{margin-top:15px;font-size:.89em;line-height:1.55;color:var(--text-2);flex:1}
+.box__link{
+  margin-top:20px;display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--f-data);font-size:11px;color:var(--text-3);
+  transition:color .3s var(--ease);
+}
+.box__link svg{width:13px;height:13px;flex:none}
+a.box:hover .box__link{color:var(--text)}
+.sec-head--mid{margin-top:clamp(48px,6vw,84px)}
+.boxes__more{margin-top:clamp(24px,3vw,34px)}
+
+/* shipped apps get more room than a repo card */
+.boxes--apps{grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))}
+.box--app{padding:clamp(24px,2.8vw,34px)}
+.box__apple{width:26px;height:26px;color:var(--text-2);margin-bottom:16px;flex:none}
+a.box--app:hover .box__apple{color:var(--accent)}
+.box--app .box__t{font-size:clamp(22px,2.6vw,30px)}
+.box--app .box__link{
+  margin-top:22px;color:var(--accent);font-size:11.5px;
+}
+a.box--app:hover .box__link{color:var(--accent)}
+
+/* a paper box: title, the + that opens it, then what it argues */
+.box__head{display:flex;align-items:flex-start;gap:16px}
+.box__head .box__t{flex:1}
+.plus--static{margin-left:0;margin-top:2px}
+a.box--paper:hover .plus--static{background:var(--accent);border-color:var(--accent)}
+a.box--paper:hover .plus--static::before,
+a.box--paper:hover .plus--static::after{background:var(--accent-ink)}
+.box--paper .box__t{font-size:clamp(17px,1.8vw,20px);line-height:1.2}
+
+/* ============================================================
+   DISCLOSURES — tap + to read more
+   ============================================================ */
+.disc{border-top:1px solid var(--rule-soft)}
+.disc:last-of-type{border-bottom:1px solid var(--rule-soft)}
+.disc > summary{
+  list-style:none;cursor:pointer;display:flex;align-items:center;gap:18px;
+  padding-block:22px;
+}
+.disc > summary::-webkit-details-marker{display:none}
+.disc__t{
+  font-family:var(--f-display);font-weight:650;
+  font-size:clamp(18px,2.1vw,25px);letter-spacing:-.028em;line-height:1.16;
+}
+.disc__sub{
+  font-family:var(--f-data);font-size:10.5px;color:var(--accent-2);
+  margin-top:7px;display:block;
+}
+.plus{
+  margin-left:auto;flex:none;position:relative;
+  width:26px;height:26px;border:1px solid var(--rule);border-radius:50%;
+  transition:border-color .3s var(--ease),background-color .3s var(--ease);
+}
+.disc > summary:hover .plus{border-color:var(--text-3)}
+.plus::before,.plus::after{content:"";position:absolute;background:var(--text-2)}
+.plus::before{left:7px;right:7px;top:50%;height:1px;transform:translateY(-50%)}
+.plus::after{top:7px;bottom:7px;left:50%;width:1px;transform:translateX(-50%) scaleY(1);transition:transform .35s var(--ease)}
+.disc[open] .plus{background:var(--accent);border-color:var(--accent)}
+.disc[open] .plus::before{background:var(--accent-ink)}
+.disc[open] .plus::after{transform:translateX(-50%) scaleY(0)}
+.disc__body{padding-bottom:28px;max-width:64ch;animation:discIn .45s var(--ease) both}
+.disc__body > * + *{margin-top:1em}
+.disc__body p{color:var(--text-2)}
+@keyframes discIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+
+/* ============================================================
+   STORY
+   ============================================================ */
+/* the opener runs two columns so the band is not half empty */
+.story__opener{
+  display:grid;
+  grid-template-columns:minmax(0,1.06fr) minmax(0,1fr);
+  gap:clamp(24px,4.5vw,72px);
+  align-items:start;
+  margin-bottom:clamp(38px,5vw,66px);
+}
+@media (max-width:820px){.story__opener{grid-template-columns:1fr;gap:18px}}
+.story__lead{
+  font-family:var(--f-display);font-weight:700;
+  font-size:clamp(24px,3.4vw,42px);line-height:1.1;
+  letter-spacing:-.036em;text-wrap:balance;
+}
+.story__sub{color:var(--text-2);max-width:48ch;padding-top:.4em}
+.disc__body strong{color:var(--text);font-weight:600}
+
+/* text beside a picture, inside a disclosure */
+.split{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.86fr);
+  gap:clamp(22px,3.4vw,46px);align-items:start;
+}
+@media (max-width:760px){.split{grid-template-columns:1fr}}
+.split > div > p + p{margin-top:1em}
+.split__fig{margin:0;border:1px solid var(--rule);overflow:hidden;background:var(--plate)}
+.split__fig img{width:100%;height:clamp(240px,26vw,340px);object-fit:cover;object-position:center 30%;filter:grayscale(1) contrast(1.05)}
+
+/* ============================================================
+   LADDER
+   ============================================================ */
+.rung{
+  display:grid;grid-template-columns:40px minmax(0,180px) minmax(0,1fr) minmax(0,140px);
+  gap:clamp(12px,2.4vw,28px);align-items:center;
+  padding-block:22px;border-top:1px solid var(--rule-soft);
+}
+.rung:last-child{border-bottom:1px solid var(--rule-soft)}
+.rung__n{font-family:var(--f-data);font-size:11px;color:var(--text-3)}
+.rung__size{font-family:var(--f-display);font-weight:700;font-size:clamp(23px,3.4vw,40px);letter-spacing:-.035em;line-height:1;font-variant-numeric:tabular-nums}
+.rung__size small{display:block;font-family:var(--f-body);font-weight:400;font-size:13px;letter-spacing:0;color:var(--text-3);margin-top:7px;line-height:1.4}
+.rung__track{position:relative;height:3px;background:var(--rule-soft);border-radius:2px;overflow:hidden}
+.rung__bar{position:absolute;inset:0 auto 0 0;background:var(--accent);width:var(--w,0%)}
+.rung__cost{font-family:var(--f-data);font-size:11.5px;color:var(--text-3);line-height:1.5;font-variant-numeric:tabular-nums}
+.rung--now .rung__size{color:var(--accent)}
+.rung--goal .rung__size,.rung--goal .rung__n,.rung--goal .rung__cost{color:var(--text-3)}
+.rung--goal .rung__bar{background:repeating-linear-gradient(90deg,var(--text-3) 0 3px,transparent 3px 7px);opacity:.55}
+@media (max-width:820px){
+  .rung{grid-template-columns:32px minmax(0,1fr);row-gap:10px}
+  .rung__track,.rung__cost{grid-column:2}
+}
+.note{margin-top:26px;max-width:62ch;font-size:.92em;color:var(--text-3);border-left:1px solid var(--rule);padding-left:18px}
+
+/* ============================================================
+   PLOT + TABLE (inside disclosures)
+   ============================================================ */
+.plot{border:1px solid var(--rule);background:var(--ground);border-radius:3px;padding:16px 16px 12px;max-width:100%}
+.band--plate .plot{background:var(--ground-2)}
+.plot__head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px;flex-wrap:wrap}
+.plot__title{font-family:var(--f-display);font-size:13.5px;font-weight:600}
+.plot__meta{font-family:var(--f-data);font-size:11px;color:var(--text-3)}
+.plot__canvas{display:block;width:100%;height:auto;aspect-ratio:16/10}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--rule)}
+table{border-collapse:collapse;width:100%;min-width:520px}
+th,td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--rule-soft);vertical-align:top}
+thead th{font-family:var(--f-display);font-size:12.5px;font-weight:600;color:var(--text-3);border-bottom:1px solid var(--rule)}
+tbody tr:last-child th,tbody tr:last-child td{border-bottom:0}
+tbody th{font-family:var(--f-body);font-weight:500;font-size:.95em;color:var(--text)}
+td{color:var(--text-2);font-size:.95em}
+td.num{font-family:var(--f-data);font-size:.85em;white-space:nowrap}
+td.fix{color:var(--accent);font-family:var(--f-data);font-size:.85em;white-space:nowrap}
+
+/* ============================================================
+   CONTACT / FOOTER
+   ============================================================ */
+.contact h2{font-size:clamp(32px,6.2vw,80px);letter-spacing:-.045em;font-weight:800;max-width:14ch}
+.contact p{margin-top:22px;max-width:46ch;color:var(--text-2)}
+.links{display:flex;flex-wrap:wrap;gap:10px;margin-top:34px}
+footer{
+  border-top:1px solid var(--rule-soft);padding-block:30px 46px;
+  font-family:var(--f-data);font-size:11px;color:var(--text-3);
+  display:flex;flex-wrap:wrap;gap:14px 26px;justify-content:space-between;
+}
+
+/* ============================================================
+   MOBILE — one pass over every section
+   ============================================================ */
+@media (max-width:900px){
+  .band{padding-block:clamp(48px,8vw,80px)}
+  .sec-head{margin-bottom:28px}
+  .sec-head--mid{margin-top:52px}
+}
+@media (max-width:640px){
+  /* masthead: keep the mark, tighten the nav, let it scroll if it must */
+  .mark__tag{display:none}
+  .mark__name{font-size:11.5px;letter-spacing:.13em}
+  .mark__core{width:29px;height:29px}
+  .mark{gap:9px}
+  .masthead__bar{gap:14px;padding-block:10px}
+  .masthead__nav{
+    gap:15px;overflow-x:auto;scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+  }
+  .masthead__nav::-webkit-scrollbar{display:none}
+  .masthead__nav a{font-size:12.5px;white-space:nowrap}
+
+  .hero{padding-block:32px 48px}
+  .hero__name{font-size:clamp(46px,13.5vw,68px)}
+  .hero__lede{font-size:17.5px;margin-top:22px}
+  .hero__portrait{max-width:none;margin-top:24px}
+  .hero__portrait img{height:min(64vw,330px);object-position:center 16%}
+
+  /* the spec plate stacks into rows instead of squeezing three columns */
+  .spec{display:grid;grid-template-columns:1fr 1fr;margin-top:26px}
+  .spec > div{
+    padding:13px 14px 14px 0;margin-right:0;
+    border-right:1px solid var(--rule-soft);
+    border-bottom:1px solid var(--rule-soft);
+  }
+  .spec > div:nth-child(2n){border-right:0;padding-right:0}
+  .spec > div:last-child{grid-column:1 / -1;border-bottom:0;border-right:0}
+  .spec dd{font-size:20px}
+
+  .acts{gap:8px;margin-top:26px}
+  .btn{padding:10px 15px;font-size:13.5px}
+
+  .infl__head{padding-block:48px 24px}
+  .scene{padding-block:26px;gap:18px}
+  .scene__name{font-size:clamp(34px,10vw,46px)}
+  .scene__impact{font-size:16.5px;margin-top:14px}
+  .scene__fig img{height:min(78vw,380px)}
+
+  .story__lead{font-size:23px}
+  .disc > summary{padding-block:18px;gap:12px}
+  .disc__t{font-size:17px}
+  .disc__body{padding-bottom:22px}
+  .plus{width:24px;height:24px}
+
+  .box{padding:20px}
+  .box__d{font-size:15px}
+  .boxes{gap:11px}
+
+  .rung{padding-block:18px}
+  .rung__size{font-size:26px}
+  .note{padding-left:14px;font-size:15px}
+
+  .contact h2{font-size:clamp(30px,8.6vw,44px)}
+  .contact p{margin-top:18px}
+  footer{padding-block:24px 36px;gap:10px}
+}
+@media (max-width:400px){
+  .spec{grid-template-columns:1fr}
+  .spec > div{border-right:0;padding-right:0}
+  .spec > div:not(:last-child){border-bottom:1px solid var(--rule-soft)}
+  .hero__name{font-size:44px}
+}
+/* comfortable tapping, and no blue flash on tap */
+@media (hover:none){
+  a,summary{-webkit-tap-highlight-color:transparent}
+  .disc > summary{min-height:52px}
+  .btn{min-height:44px}
+  a.box:hover{transform:none}
+}
+
+/* ============================================================
+   MOTION
+   ============================================================ */
+:root.is-motion .hero__name .ln i{transform:translateY(105%)}
+:root.is-motion .hero__reveal{opacity:0;transform:translateY(14px)}
+:root.is-ready .hero__name .ln i{transform:translateY(0);transition:transform 1.05s var(--ease)}
+:root.is-ready .hero__name .ln:nth-child(2) i{transition-delay:.09s}
+:root.is-ready .hero__reveal{opacity:1;transform:none;transition:opacity .85s var(--ease),transform .85s var(--ease)}
+:root.is-ready .hero__reveal[data-d="1"]{transition-delay:.24s}
+:root.is-ready .hero__reveal[data-d="2"]{transition-delay:.34s}
+:root.is-ready .hero__reveal[data-d="3"]{transition-delay:.44s}
+@media (prefers-reduced-motion:reduce){
+  :root.is-motion .hero__name .ln i,:root.is-motion .hero__reveal{transform:none;opacity:1}
+  *{animation-duration:.001ms!important;transition-duration:.001ms!important}
+}
+</style>
+
+<!-- opening sequence: the photo lands here, then flies to its place in the hero -->
+<div class="intro" id="intro" hidden>
+  <div class="intro__inner">
+    <figure class="intro__fig" id="introFig">
+      <img src="portrait.webp" width="928" height="1152" alt="" fetchpriority="high" decoding="async">
+    </figure>
+    <p class="intro__name">Ardit Berisha</p>
+    <p class="intro__born" id="introBorn" hidden></p>
+  </div>
+</div>
+
+<canvas id="trace" aria-hidden="true"></canvas>
+
+<header class="masthead">
+  <div class="masthead__bar">
+    <a class="mark" href="#top" aria-label="Ardit Berisha — back to top">
+      <span class="mark__core" aria-hidden="true">
+        <img class="mark__face" src="logo.png" width="320" height="320" alt="">
+        <svg class="mark__ring" viewBox="0 0 40 40">
+          <circle class="ring-o" cx="20" cy="20" r="18.6"/>
+          <circle class="ring-i" cx="20" cy="20" r="16.4"/>
+        </svg>
+      </span>
+      <span class="mark__type">
+        <span class="mark__name">Ardit Berisha</span>
+        <span class="mark__tag">Tech Scientist</span>
+      </span>
+    </a>
+    <nav class="masthead__nav">
+      <a href="#apps">Apps</a>
+      <a href="#influences" data-optional>Influences</a>
+      <a href="#story">Story</a>
+      <a href="#work" data-optional>Work</a>
+      <a href="#projects">Projects</a>
+      <a href="#research">Research</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+  <div class="progress"><div class="progress__fill" id="progress"></div></div>
+</header>
+
+<main id="top">
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero wrap">
+   <div class="hero__grid">
+    <h1 class="hero__name">
+      <span class="ln"><i>Ardit</i></span>
+      <span class="ln"><i>Berisha</i></span>
+    </h1>
+
+    <p class="hero__born hero__reveal" data-d="1">Born 6 February 2006</p>
+
+    <figure class="hero__portrait hero__reveal" data-d="1">
+      <img src="portrait.webp" width="928" height="1152" alt="Portrait of Ardit Berisha" fetchpriority="high" decoding="async">
+    </figure>
+
+    <p class="hero__lede hero__reveal" data-d="1">
+      I build AI. <b>Twenty years old</b>, researching since 2022, and now starting
+      my own AI lab.
+    </p>
+
+    <dl class="spec hero__reveal" data-d="2">
+      <div>
+        <dt>Building since</dt>
+        <dd>Age 10</dd>
+      </div>
+      <div>
+        <dt>Models trained</dt>
+        <dd>20M <span>to</span> 32B</dd>
+      </div>
+      <div>
+        <dt>Runs on</dt>
+        <dd>Phones, CPUs</dd>
+      </div>
+    </dl>
+
+    <div class="acts hero__reveal" data-d="3">
+      <a class="btn btn--solid" href="#apps">
+        <svg viewBox="0 0 384 512" aria-hidden="true" fill="currentColor"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+        My apps
+      </a>
+      <a class="btn" href="#story">Read my story</a>
+      <a class="btn" href="https://github.com/arditbe" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        GitHub
+      </a>
+      <a class="btn" href="https://www.linkedin.com/in/ardit-berishaa1/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M3.6 5.2H.9V15h2.7V5.2ZM2.25 1A1.56 1.56 0 1 0 2.25 4.12 1.56 1.56 0 0 0 2.25 1ZM15.1 9.44c0-2.64-1.41-3.87-3.29-3.87-1.52 0-2.2.84-2.58 1.42V5.2H6.54c.04.76 0 9.8 0 9.8h2.69V9.53c0-.24.02-.48.09-.65.19-.48.63-.98 1.37-.98.97 0 1.36.74 1.36 1.82V15h2.69l.01-5.56Z"/></svg>
+        LinkedIn
+      </a>
+      <a class="btn" href="https://www.instagram.com/ardit.berishaa1/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 1.44c2.14 0 2.39.01 3.23.05.78.03 1.2.16 1.49.27.37.15.64.32.92.6.28.28.45.55.6.92.11.28.24.71.27 1.49.04.84.05 1.09.05 3.23s-.01 2.39-.05 3.23c-.03.78-.16 1.2-.27 1.49-.15.37-.32.64-.6.92-.28.28-.55.45-.92.6-.28.11-.71.24-1.49.27-.84.04-1.09.05-3.23.05s-2.39-.01-3.23-.05c-.78-.03-1.2-.16-1.49-.27-.37-.15-.64-.32-.92-.6-.28-.28-.45-.55-.6-.92-.11-.28-.24-.71-.27-1.49C1.45 10.39 1.44 10.14 1.44 8s.01-2.39.05-3.23c.03-.78.16-1.2.27-1.49.15-.37.32-.64.6-.92.28-.28.55-.45.92-.6.28-.11.71-.24 1.49-.27C5.61 1.45 5.86 1.44 8 1.44ZM8 0C5.82 0 5.55.01 4.7.05c-.85.04-1.43.17-1.93.37-.53.2-.98.48-1.42.93-.45.44-.72.89-.93 1.42-.2.5-.33 1.08-.37 1.93C.01 5.55 0 5.82 0 8s.01 2.45.05 3.3c.04.85.17 1.43.37 1.93.2.53.48.98.93 1.42.44.45.89.72 1.42.93.5.2 1.08.33 1.93.37.85.04 1.12.05 3.3.05s2.45-.01 3.3-.05c.85-.04 1.43-.17 1.93-.37.53-.2.98-.48 1.42-.93.45-.44.72-.89.93-1.42.2-.5.33-1.08.37-1.93.04-.85.05-1.12.05-3.3s-.01-2.45-.05-3.3c-.04-.85-.17-1.43-.37-1.93-.2-.53-.48-.98-.93-1.42-.44-.45-.89-.72-1.42-.93-.5-.2-1.08-.33-1.93-.37C10.45.01 10.18 0 8 0Zm0 3.89a4.11 4.11 0 1 0 0 8.22 4.11 4.11 0 0 0 0-8.22Zm0 6.78a2.67 2.67 0 1 1 0-5.34 2.67 2.67 0 0 1 0 5.34Zm5.24-6.94a.96.96 0 1 1-1.92 0 .96.96 0 0 1 1.92 0Z"/></svg>
+        Instagram
+      </a>
+    </div>
+   </div>
+  </section>
+  <!-- ===================== APPS ===================== -->
+  <section class="band band--plate" id="apps">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>On the App Store</h2>
+        <p>Two of mine are live. Both shipped, both downloadable right now.</p>
+      </div>
+
+      <div class="boxes boxes--apps">
+        <a class="box box--app" href="https://apps.apple.com/be/app/amaro-than/id6756788715" target="_blank" rel="noopener">
+          <svg class="box__apple" viewBox="0 0 384 512" aria-hidden="true" fill="currentColor"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+          <h3 class="box__t">Amaro Than</h3>
+          <p class="box__meta">iOS &middot; the platform I co-founded</p>
+          <p class="box__d">The social platform I built as CTO and co-founder, written line by line from 2022. Everything underneath it — the backend, the feed, the ranking — is mine, and AINARA is the engine choosing what you see.</p>
+          <span class="box__link">View on the App Store</span>
+        </a>
+        <a class="box box--app" href="https://apps.apple.com/us/app/ainara/id6812123504" target="_blank" rel="noopener">
+          <svg class="box__apple" viewBox="0 0 384 512" aria-hidden="true" fill="currentColor"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+          <h3 class="box__t">AINARA</h3>
+          <p class="box__meta">iOS &middot; my AI, as its own app</p>
+          <p class="box__d">AINARA as a standalone app, built to run on the phone you already own rather than on a datacentre somewhere else. The same work as the research: make it small enough that ordinary hardware can carry it.</p>
+          <span class="box__link">View on the App Store</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===================== CREED ===================== -->
+  <section class="band creed" id="creed">
+    <div class="wrap">
+      <p class="creed__lead">I never got a computer science degree. I pre-trained myself.</p>
+      <p class="creed__hit">School doesn't teach you. It fine-tunes what you already know.</p>
+      <p class="creed__body">
+        I went to a computer science high school, and that is the whole of my formal
+        education in this. Everything else came from documentation, from source code,
+        and from breaking things until they made sense. A degree for what is already
+        on the internet, free, is unnecessary — and I would rather spend those four
+        years shipping.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===================== INFLUENCES ===================== -->
+  <section class="infl" id="influences">
+    <div class="infl__head wrap">
+      <h2>The people who got me here</h2>
+      <p>Steve Jobs most of all. Keep scrolling.</p>
+    </div>
+
+    <div class="infl__scroll" id="inflScroll">
+      <div class="infl__stage" id="inflStage">
+        <div class="scenes" id="scenes">
+
+          <article class="scene scene--prime">
+            <div class="scene__text">
+              <p class="scene__n">01 / 09</p>
+              <p class="scene__who">Apple</p>
+              <h3 class="scene__name">Steve Jobs</h3>
+              <p class="scene__impact">
+                The biggest influence on me, and the reason I love Apple. He made me believe that how something feels matters as much as whether it works, and that one person with taste and stubbornness can change what everyone else thinks is possible.
+              </p>
+            </div>
+            <figure class="scene__fig">
+              <img src="people/steve-jobs.jpg" alt="Steve Jobs" loading="eager" decoding="async">
+            </figure>
+          </article>
+
+          <article class="scene">
+            <div class="scene__text">
+              <p class="scene__n">02 / 09</p>
+              <p class="scene__who">Musician</p>
+              <h3 class="scene__name">Michael Jackson</h3>
+              <p class="scene__impact">
+                Total obsession with craft. He rehearsed things nobody would ever notice until they were perfect. That is the standard I hold myself to when I am tuning a model nobody is watching me tune.
+              </p>
+            </div>
+            <figure class="scene__fig">
+              <img src="people/michael-jackson.jpg" alt="Michael Jackson" loading="lazy" decoding="async">
+            </figure>
+          </article>
+
+          <article class="scene">
+            <div class="scene__text">
+              <p class="scene__n">03 / 09</p>
+              <p class="scene__who">Marvel</p>
+              <h3 class="scene__name">Stan Lee</h3>
+              <p class="scene__impact">
+                He built whole worlds out of nothing and made his heroes flawed people first. He is why I think the thing you build has to mean something to whoever ends up holding it — and why I never thought being young was a reason to wait.
+              </p>
+            </div>
+            <figure class="scene__fig">
+              <img src="people/stan-lee.jpg" alt="Stan Lee" loading="lazy" decoding="async">
+            </figure>
+          </article>
+
+          <article class="scene">
+            <div class="scene__text">
+              <p class="scene__n">04 / 09</p>
+              <p class="scene__who">Meta</p>
+              <h3 class="scene__name">Mark Zuckerberg</h3>
+              <p class="scene__impact">
+                He started young and shipped before he was ready, without waiting for permission or a degree. When I started at sixteen with one laptop, that mattered.
+              </p>
+            </div>
+            <figure class="scene__fig">
+              <img src="people/zuckerberg.jpg" alt="Mark Zuckerberg" loading="lazy" decoding="async">
+            </figure>
+          </article>
+
+          <article class="scene">
+            <div class="scene__text">
+              <p class="scene__n">05 / 09</p>
+              <p class="scene__who">OpenAI</p>
+              <h3 class="scene__name">Sam Altman</h3>
+              <p class="scene__impact">
+                He put AI in front of ordinary people instead of leaving it in research papers. That is the part I want to get right too: models that reach people, not just benchmarks.
+              </p>
+            </div>
+            <figure class="scene__fig">
+              <img src="people/sam-altman.jpg" alt="Sam Altman" loading="lazy" decoding="async">
+            </figure>
+          </article>
+
+          <article class="scene">
+            <div class="scene__text">
+              <p class="scene__n">06 / 09</p>
+              <p class="scene__who">Anthropic</p>
+              <h3 class="scene__name">Dario Amodei</h3>
+              <p class="scene__impact">
+                Proof that you can build AI at the frontier and still treat safety as the main problem rather than an afterthought. A lot of how I think about self-learning systems comes from taking that seriously.
+              </p>
+            </div>
+            <figure class="scene__fig">
+              <img src="people/dario-amodei.jpg" alt="Dario Amodei" loading="lazy" decoding="async">
+            </figure>
+          </article>
+
+          <article class="scene">
+            <div class="scene__text">
+              <p class="scene__n">07 / 09</p>
+              <p class="scene__who">Cardiac surgery</p>
+              <h3 class="scene__name">Vivien Thomas</h3>
+              <p class="scene__impact">
+                He had no medical degree and was hired as a janitor, and he worked out the operation that saved blue baby children — then stood behind the surgeon and talked him through the first one. He taught surgeons for decades before anyone would call him a doctor. He is the proof that the credential was never the thing doing the work.
+              </p>
+            </div>
+            <figure class="scene__fig">
+              <img src="people/vivien-thomas.jpg" alt="Vivien Thomas" loading="lazy" decoding="async">
+            </figure>
+          </article>
+
+          <article class="scene">
+            <div class="scene__text">
+              <p class="scene__n">08 / 09</p>
+              <p class="scene__who">Inventor</p>
+              <h3 class="scene__name">Nikola Tesla</h3>
+              <p class="scene__impact">
+                He worked decades ahead of everyone around him and was not understood until long after. He is why I do not mind that the thing I am building is not obvious to people yet.
+              </p>
+            </div>
+            <figure class="scene__fig">
+              <img src="people/tesla.jpg" alt="Nikola Tesla" loading="lazy" decoding="async">
+            </figure>
+          </article>
+
+          <article class="scene">
+            <div class="scene__text">
+              <p class="scene__n">09 / 09</p>
+              <p class="scene__who">Apollo 11</p>
+              <h3 class="scene__name">Neil Armstrong</h3>
+              <p class="scene__impact">
+                Someone has to go first, and going first means accepting you might not come back. My reminder that the hardest problems get solved by people willing to take the step nobody has taken.
+              </p>
+            </div>
+            <figure class="scene__fig">
+              <img src="people/armstrong.jpg" alt="Neil Armstrong" loading="lazy" decoding="async">
+            </figure>
+          </article>
+
+        </div>
+
+        <div class="infl__ticks" id="inflTicks" aria-hidden="true">
+          <span class="infl__tick on"></span>
+          <span class="infl__tick"></span>
+          <span class="infl__tick"></span>
+          <span class="infl__tick"></span>
+          <span class="infl__tick"></span>
+          <span class="infl__tick"></span>
+          <span class="infl__tick"></span>
+          <span class="infl__tick"></span>
+          <span class="infl__tick"></span>
+          <span class="infl__count" id="inflCount">01 / 09</span>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ===================== RESEARCH ===================== -->
+  <section class="band" id="research">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Papers</h2>
+        <p>
+          Written under Grow Labs. Tap any one to open the PDF. All three report what
+          failed as carefully as what worked.
+        </p>
+      </div>
+
+      <div class="boxes">
+        <a class="box box--paper" href="papers/how-to-build-an-ai.pdf" target="_blank" rel="noopener">
+          <div class="box__head">
+            <h3 class="box__t">How to Build an AI From Scratch: A Complete Step-by-Step Guide</h3>
+            <span class="plus plus--static" aria-hidden="true"></span>
+          </div>
+          <p class="box__meta">Grow Labs &middot; 22 September 2026 &middot; all code included</p>
+          <p class="box__d">The whole build, with every line of code: setup, collecting and cleaning data, tokenizing, the transformer itself, the training loop, the hyperparameters that work, and how to sample so it writes sentences instead of gibberish. It runs on a laptop — Apple Silicon through MPS, an NVIDIA GPU, or a plain CPU. The point it lands on: more data gives better generation, and reading the output is the only true test.</p>
+          <span class="box__link">Open the PDF</span>
+        </a>
+        <a class="box box--paper" href="papers/how-to-make-ai.pdf" target="_blank" rel="noopener">
+          <div class="box__head">
+            <h3 class="box__t">How to Make AI: Building a Language Model From Scratch</h3>
+            <span class="plus plus--static" aria-hidden="true"></span>
+          </div>
+          <p class="box__meta">Grow Labs &middot; 21 September 2026</p>
+          <p class="box__d">A step-by-step account of building a language model, written around my first one: 20 million parameters, 10,000 samples. Preparing data, tokenizing, designing the model, training it, tuning hyperparameters, measuring overfitting and generating text — including every setting that broke it first, and the numbers that fixed each one.</p>
+          <span class="box__link">Open the PDF</span>
+        </a>
+        <a class="box box--paper" href="papers/from-narrow-to-general.pdf" target="_blank" rel="noopener">
+          <div class="box__head">
+            <h3 class="box__t">From Narrow to General: Can Self-Learning Systems Lead to AGI?</h3>
+            <span class="plus plus--static" aria-hidden="true"></span>
+          </div>
+          <p class="box__meta">Grow Labs &middot; 21 September 2026</p>
+          <p class="box__d">An argument that scale alone will not reach AGI, because a model&rsquo;s knowledge freezes the moment training ends. It proposes a dynamic self-learning system — one that updates itself while acting and learns from its own mistakes — and sets out five experiments to test whether small models can generalise past what they were trained on.</p>
+          <span class="box__link">Open the PDF</span>
+        </a>
+        <a class="box box--paper" href="papers/how-ai-works.pdf" target="_blank" rel="noopener">
+          <div class="box__head">
+            <h3 class="box__t">How AI Works, and Can It Take Over the World?</h3>
+            <span class="plus plus--static" aria-hidden="true"></span>
+          </div>
+          <p class="box__meta">Grow Labs &middot; 22 September 2026</p>
+          <p class="box__d">How modern AI actually works, in plain language: the three levels (ANI, AGI, ASI), what today&rsquo;s systems can and cannot do, and what would change if a superintelligence had a physical body. My conclusion is that a Hollywood takeover is not the real danger — loss of control over very advanced systems is, and the near-term harms are already here.</p>
+          <span class="box__link">Open the PDF</span>
+        </a>
+        <a class="box box--paper" href="papers/fine-tuning-narrow-ai.pdf" target="_blank" rel="noopener">
+          <div class="box__head">
+            <h3 class="box__t">Fine-Tuning Makes Specialists: Why Fine-Tuned Models Behave Like Narrow AI</h3>
+            <span class="plus plus--static" aria-hidden="true"></span>
+          </div>
+          <p class="box__meta">Grow Labs &middot; 22 September 2026</p>
+          <p class="box__d">Fine-tuning is how nearly everyone adapts a model, and I argue it usually moves that model <em>towards</em> narrow AI rather than towards general intelligence. It gets better at one thing, loses some general ability, and stops learning the moment training ends. Backed with the evidence on catastrophic forgetting — and the one real exception, broad multi-task tuning. Written out of fine-tuning Mistral-7B for the Romani language.</p>
+          <span class="box__link">Open the PDF</span>
+        </a>
+        <a class="box box--paper" href="papers/auditor-paper.pdf" target="_blank" rel="noopener">
+          <div class="box__head">
+            <h3 class="box__t">Auditor: An Autonomous Agent for Continuous Evaluation of Fine-Tuned Models</h3>
+            <span class="plus plus--static" aria-hidden="true"></span>
+          </div>
+          <p class="box__meta">22 September 2026 &middot; the paper behind the repository</p>
+          <p class="box__d">Anyone can fine-tune a model on a laptop now, but almost nobody can tell whether the result is any good. Auditor writes fresh probes for every run, has a separate judge commit to its criteria before it sees the answer, makes one probe in four a deliberate trap for hallucination, and drills harder wherever a score comes back weak. It exists because I fine-tuned Mistral-7B on Romani-language books and had no honest way to know if I had improved it.</p>
+          <span class="box__link">Open the PDF</span>
+        </a>
+        <a class="box box--paper" href="papers/ai-for-good.pdf" target="_blank" rel="noopener">
+          <div class="box__head">
+            <h3 class="box__t">How AI and AGI Can Change the World for Good</h3>
+            <span class="plus plus--static" aria-hidden="true"></span>
+          </div>
+          <p class="box__meta">Grow Labs &middot; 22 September 2026</p>
+          <p class="box__d">Almost everything written about AI is about its dangers. This is the other side: where narrow AI is already doing measurable good in health, science, education and climate, what a general system could add on top, and what has to be true for any of it to reach everyone instead of a few. The benefits are real and large — but none of them are automatic.</p>
+          <span class="box__link">Open the PDF</span>
+        </a>
+        <a class="box box--paper" href="papers/do-benchmarks-matter.pdf" target="_blank" rel="noopener">
+          <div class="box__head">
+            <h3 class="box__t">Do AI Benchmarks Matter?</h3>
+            <span class="plus plus--static" aria-hidden="true"></span>
+          </div>
+          <p class="box__meta">Grow Labs &middot; 22 September 2026</p>
+          <p class="box__d">A benchmark score is one number, and I argue it is worth far less than the headlines it sells. Goodhart&rsquo;s law applies the moment labs compete on a table. The test setup alone can move a result by six points — Fable 5.1 was reported at both 67.4% and 73.7% on the same benchmark. Add contamination, saturation, and the fact that companies choose which scores to show, and a two-point lead means almost nothing.</p>
+          <span class="box__link">Open the PDF</span>
+        </a>
+        <a class="box box--paper" href="papers/claude-vs-chatgpt.pdf" target="_blank" rel="noopener">
+          <div class="box__head">
+            <h3 class="box__t">Claude and ChatGPT: Two Paths in AI, and How GPT-6 Astra Changed the View</h3>
+            <span class="plus plus--static" aria-hidden="true"></span>
+          </div>
+          <p class="box__meta">Grow Labs &middot; 22 September 2026</p>
+          <p class="box__d">A comparison of the two assistant families — their histories, their design philosophies and where they actually stand. Then what GPT-6 Astra changed: benchmarks running out of room, frontier AI becoming a worker rather than a chatbot, reasoning becoming harder to observe, and both labs moving to gated releases. The question is no longer which model is smartest, but which can be trusted, measured and controlled.</p>
+          <span class="box__link">Open the PDF</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- ===================== STORY ===================== -->
+  <section class="band" id="story">
+    <div class="wrap">
+      <div class="story__opener">
+        <h2 class="story__lead">
+          I was ten when I started learning how computers actually work. It is still
+          the best thing I have ever done.
+        </h2>
+        <p class="story__sub">
+          It started with BAT files and a stubborn attempt to break into my own
+          copy of Windows. Ten years later I train language models from scratch
+          and I am starting my own AI lab. Nobody ever taught me any of it — no
+          course, no bootcamp, no degree. It is the same curiosity. The machines
+          just got bigger.
+        </p>
+      </div>
+
+      <details class="disc" open>
+        <summary>
+          <span><span class="disc__t">Why Apple</span><span class="disc__sub">Steve Jobs, and what he taught me</span></span>
+          <span class="plus" aria-hidden="true"></span>
+        </summary>
+        <div class="disc__body" style="max-width:none">
+          <div class="split">
+            <div>
+              <p>
+                I love Apple, and Steve Jobs is the reason I build anything at all. He
+                is the one who taught me that the way a thing feels to use is not
+                decoration on top of the engineering — it is the engineering.
+              </p>
+              <p>
+                That is why I care so much about models running on the devices people
+                already have. A model nobody can run is not a finished piece of work.
+              </p>
+            </div>
+            <figure class="split__fig">
+              <img src="people/steve-tim.jpg" alt="Steve Jobs and Tim Cook" loading="lazy" decoding="async">
+            </figure>
+          </div>
+        </div>
+      </details>
+
+      <details class="disc">
+        <summary>
+          <span><span class="disc__t">Age 10: BAT files, and the antivirus for my own viruses</span><span class="disc__sub">Where software actually started</span></span>
+          <span class="plus" aria-hidden="true"></span>
+        </summary>
+        <div class="disc__body">
+          <p>
+            I started with simple BAT files, trying to crack my own copy of Windows
+            just to see whether I could. Then I wrote viruses — several of them — for
+            no reason other than wanting to know how they worked.
+          </p>
+          <p>
+            Then I wrote the antivirus for them. That turn is the part I still think
+            about: the interesting problem was never breaking the machine, it was
+            understanding it well enough to defend it from what I had just built.
+            Everything since has been a version of that.
+          </p>
+        </div>
+      </details>
+
+      <details class="disc">
+        <summary>
+          <span><span class="disc__t">14 and 15: Python, then five languages</span><span class="disc__sub">Entirely self-taught</span></span>
+          <span class="plus" aria-hidden="true"></span>
+        </summary>
+        <div class="disc__body">
+          <p>
+            At fourteen I started learning Python on my own. I have never taken a
+            course in technology — not one, at any point. Everything came from
+            documentation, source code and breaking things until they made sense.
+          </p>
+          <p>
+            By fifteen I was working in <strong>five programming languages</strong>.
+            That is also when it stopped being about languages: the interesting part
+            was no longer the syntax but what you could make several systems do
+            together.
+          </p>
+        </div>
+      </details>
+
+      <details class="disc">
+        <summary>
+          <span><span class="disc__t">2020: Tubify</span><span class="disc__sub">My first platform</span></span>
+          <span class="plus" aria-hidden="true"></span>
+        </summary>
+        <div class="disc__body">
+          <p>
+            I built a social media platform called <strong>Tubify</strong>. It is where
+            everything I had taught myself stopped being separate tricks and became one
+            system — accounts, feeds, media, storage, all of it having to agree with
+            each other at the same time.
+          </p>
+          <p>
+            Learning to connect things is a different skill from learning to build
+            them, and Tubify is where I learned it.
+          </p>
+        </div>
+      </details>
+
+      <details class="disc">
+        <summary>
+          <span><span class="disc__t">2022: Amaro Than Platforms</span><span class="disc__sub">Written line by line</span></span>
+          <span class="plus" aria-hidden="true"></span>
+        </summary>
+        <div class="disc__body">
+          <p>
+            I started <strong>Amaro Than Platforms</strong> and coded it myself, line by
+            line — every service, every endpoint, the whole backend. No team writing it
+            around me, no framework doing the thinking.
+          </p>
+          <p>
+            That is where my software engineering grew up, and it is why I can say
+            exactly why every part of it behaves the way it does.
+          </p>
+        </div>
+      </details>
+
+      <details class="disc">
+        <summary>
+          <span><span class="disc__t">2022: my first model</span><span class="disc__sub">20M parameters, 10,000 samples</span></span>
+          <span class="plus" aria-hidden="true"></span>
+        </summary>
+        <div class="disc__body">
+          <p>
+            <strong>20 million parameters, trained from scratch on my own laptop</strong>,
+            on 10,000 samples. I chose that size because it was what one machine could
+            hold, and it turned out to be the right place to start. A model that small
+            is cheap enough to train again when you are wrong, and small enough that you
+            can see <strong>why</strong> you were wrong.
+          </p>
+          <p>
+            The plot further down this page is that model: three runs, the overfitting
+            gap falling from above 2.9 to 0.1851. Everything I know about learning rate,
+            dropout and temperature came from breaking it first.
+          </p>
+        </div>
+      </details>
+
+      <details class="disc">
+        <summary>
+          <span><span class="disc__t">Narrow AI, then scale</span><span class="disc__sub">ANI, then 12B and 32B</span></span>
+          <span class="plus" aria-hidden="true"></span>
+        </summary>
+        <div class="disc__body">
+          <p>
+            I built <strong>ANI</strong> — artificial narrow intelligence, systems that
+            are excellent at exactly one domain. That is where the small models went. It
+            is also why the question in my second paper is not abstract for me: a narrow
+            model is superb until you show it something from outside its domain, and
+            then it has nothing. I have watched exactly where they stop.
+          </p>
+          <p>
+            The work now runs at <strong>12 billion and 32 billion parameters on NVIDIA
+            GPUs in Google Cloud</strong>. Nothing about the method changed. Only the
+            cost of being wrong did.
+          </p>
+        </div>
+      </details>
+
+      <details class="disc">
+        <summary>
+          <span><span class="disc__t">What I am doing next</span><span class="disc__sub">Leaving Amaro Than for Grow Labs</span></span>
+          <span class="plus" aria-hidden="true"></span>
+        </summary>
+        <div class="disc__body">
+          <p>
+            I am leaving <strong>Amaro Than Platforms</strong> soon. It is where my
+            software and backend work started, and I am proud of it, but my attention
+            belongs in one place now.
+          </p>
+          <p>
+            That place is <strong>Grow Labs</strong> — my own AI lab. Full focus, on the
+            one problem I actually care about: models that keep learning after they are
+            deployed, instead of freezing the moment training ends.
+          </p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ===================== WORK ===================== -->
+  <section class="band band--plate" id="work">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>What I do</h2>
+        <p>Four stages. Open any one to read how it actually goes.</p>
+      </div>
+
+      <details class="disc">
+        <summary>
+          <span><span class="disc__t">Pre-training</span><span class="disc__sub">20M to 32B parameters</span></span>
+          <span class="plus" aria-hidden="true"></span>
+        </summary>
+        <div class="disc__body">
+          <p>
+            Building the model from nothing: tokenizer, embeddings, transformer layers,
+            output head, then the training loop that grinds cross-entropy loss down.
+            I have run this from 20 million parameters on a laptop up to 32 billion on
+            NVIDIA GPUs in Google Cloud — the same six stages at both ends, with very
+            different consequences for getting them wrong.
+          </p>
+        </div>
+      </details>
+
+      <details class="disc">
+        <summary>
+          <span><span class="disc__t">Post-training</span><span class="disc__sub">Where a model becomes usable</span></span>
+          <span class="plus" aria-hidden="true"></span>
+        </summary>
+        <div class="disc__body">
+          <p>
+            The stage that decides whether a model is usable or useless. Learning rate,
+            dropout, weight decay and sampling temperature are what separate coherent
+            text from a loop or a confident lie.
+          </p>
+          <p>
+            Getting these four right was the biggest lesson of my work so far — and I
+            learned it by getting all four wrong first.
+          </p>
+        </div>
+      </details>
+
+      <details class="disc">
+        <summary>
+          <span><span class="disc__t">Data development</span><span class="disc__sub">The stage everything else inherits</span></span>
+          <span class="plus" aria-hidden="true"></span>
+        </summary>
+        <div class="disc__body">
+          <p>
+            Collecting, cleaning and structuring the corpus as JSONL, one training
+            example per line, with a validation set held back so I can tell learning
+            apart from memorising.
+          </p>
+          <p>
+            If a fact is not in the data, the model cannot know it. Everything
+            downstream inherits this stage's mistakes.
+          </p>
+        </div>
+      </details>
+
+      <details class="disc">
+        <summary>
+          <span><span class="disc__t">Running it on bad hardware</span><span class="disc__sub">Phones, low-end PCs, plain CPUs</span></span>
+          <span class="plus" aria-hidden="true"></span>
+        </summary>
+        <div class="disc__body">
+          <p>
+            Models and apps built for phones, low-end PCs and CPU-only inference. Most
+            of the world does not have an H100.
+          </p>
+          <p>
+            I would rather ship something that runs on what people already own than
+            something that needs a datacentre to say hello.
+          </p>
+        </div>
+      </details>
+    </div>
+  </section>
+  <!-- ===================== TRAINING LOG ===================== -->
+  <section class="band" id="log">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>From the training log</h2>
+        <p>The numbers behind the first paper, and the mistakes behind the numbers.</p>
+      </div>
+
+      <details class="disc" open>
+        <summary>
+          <span><span class="disc__t">How the overfitting gap came down</span><span class="disc__sub">Three runs, 2022</span></span>
+          <span class="plus" aria-hidden="true"></span>
+        </summary>
+        <div class="disc__body" style="max-width:none">
+          <figure class="plot" style="margin:0;max-width:620px">
+            <div class="plot__head">
+              <span class="plot__title">Overfitting gap, my first model</span>
+              <span class="plot__meta">2022 / 20M params</span>
+            </div>
+            <canvas class="plot__canvas" id="lossPlot" width="880" height="550"
+              role="img"
+              aria-label="Overfitting gap falling across three training runs: above 2.9 on a small dataset, 0.5788 at five thousand samples, and 0.1851 at ten thousand samples, with a generalisation threshold at 1.0."></canvas>
+          </figure>
+          <p style="max-width:64ch;margin-top:16px">
+            Validation loss minus training loss. Under 1.0 is the line I treat as real
+            generalisation. Doubling the dataset cut the gap by about 68% — more data
+            fixed overfitting harder than any other change I tried.
+          </p>
+        </div>
+      </details>
+
+      <details class="disc">
+        <summary>
+          <span><span class="disc__t">The four numbers that decided everything</span><span class="disc__sub">What broke, and what fixed it</span></span>
+          <span class="plus" aria-hidden="true"></span>
+        </summary>
+        <div class="disc__body" style="max-width:none">
+          <div class="tablewrap">
+            <table>
+              <thead>
+                <tr><th scope="col">What the model did</th><th scope="col">Cause</th><th scope="col">Fix</th></tr>
+              </thead>
+              <tbody>
+                <tr><th scope="row">Training went unstable, output looped</th><td class="num">Learning rate 0.05</td><td class="fix">0.0001</td></tr>
+                <tr><th scope="row">Made things up, confidently</th><td class="num">Dropout and weight decay too low</td><td class="fix">0.15 / 0.02</td></tr>
+                <tr><th scope="row">Repeated the same words</th><td class="num">Temperature 0.1</td><td class="fix">0.25</td></tr>
+                <tr><th scope="row">Went random, invented facts</th><td class="num">Temperature 0.8</td><td class="fix">0.25</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="max-width:64ch;margin-top:16px">
+            Temperature is the one worth explaining. Low temperature always picks the
+            most likely next token, so the model repeats. High temperature reaches for
+            unlikely ones, so it talks nonsense. For my model, 0.25 was the balance.
+          </p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+
+  <!-- ===================== PROJECTS ===================== -->
+  <section class="band" id="projects">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>What I run</h2>
+        <p>Separate efforts, and I keep them that way.</p>
+      </div>
+
+      <div class="boxes">
+        <div class="box">
+          <h3 class="box__t">Grow Labs</h3>
+          <p class="box__meta">My own AI lab</p>
+          <p class="box__d">Where the model work happens: training runs from 20M to 32B, both 2026 papers, and the research into systems that keep learning after deployment. This is my full focus from now on.</p>
+        </div>
+        <div class="box">
+          <h3 class="box__t">Amaro Than Platforms LLC</h3>
+          <p class="box__meta">CTO and co-founder, 2022 &middot; leaving soon</p>
+          <p class="box__d">I started it in 2022 and wrote it line by line — every service, every endpoint, the whole backend. It is where my software engineering grew up. I am stepping away to put everything into Grow Labs.</p>
+        </div>
+        <div class="box">
+          <h3 class="box__t">Friday</h3>
+          <p class="box__meta">My own AI platform</p>
+          <p class="box__d">A separate project of mine, built independently of the company and the lab.</p>
+        </div>
+        <div class="box">
+          <h3 class="box__t">Tubify</h3>
+          <p class="box__meta">Social platform, 2020</p>
+          <p class="box__d">My first real platform. It is where everything I had taught myself stopped being separate tricks and became one system — auth, feeds, media and storage all having to agree with each other.</p>
+        </div>
+      </div>
+
+      <div class="sec-head sec-head--mid">
+        <h2>Code</h2>
+        <p>Open repositories. All of it written by me, all of it public.</p>
+      </div>
+
+      <div class="boxes">
+        <a class="box box--repo" href="https://github.com/arditbe/marie" target="_blank" rel="noopener">
+          <h3 class="box__t">Marie</h3>
+          <p class="box__meta">Python &middot; Apache-2.0 &middot; founded by me</p>
+          <p class="box__d">Open-source general intelligence for medicine and micro-scale instruments. The aim is earlier intervention: find it at 10&#8315;&#178; m, remove it at 10&#8315;&#8309; m, without taking the healthy tissue around it. An instrument working at a micron cannot be driven by a hand, so the intelligence comes first and the instrument is its hand. Everything public, including the experiments that failed.</p>
+          <span class="box__link"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> arditbe/marie</span>
+        </a>
+        <a class="box box--repo" href="https://github.com/arditbe/auditor" target="_blank" rel="noopener">
+          <h3 class="box__t">Auditor</h3>
+          <p class="box__meta">Python &middot; Google ADK &middot; Apache-2.0</p>
+          <p class="box__d">An agent that audits your fine-tuned model on its own, on a schedule. It writes its own probes, has a separate judge score every answer against criteria fixed before it sees the response, then drills deeper into whatever scored badly. Every failure becomes a training example with a corrected answer. Built for a hackathon on Vertex AI, Firestore and Cloud Run.</p>
+          <span class="box__link"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> arditbe/auditor</span>
+        </a>
+        <a class="box box--repo" href="https://github.com/arditbe/ReShoot" target="_blank" rel="noopener">
+          <h3 class="box__t">ReShoot</h3>
+          <p class="box__meta">Python &middot; JavaScript &middot; local Ollama</p>
+          <p class="box__d">A local-first metadata auditor and editor for photographs. Describe a shot in plain English and it rewrites the file&rsquo;s EXIF, XMP and IPTC tags to match, then tells you how convincing the result actually is. Golden hour is computed from the NOAA solar equations rather than guessed, exposure is solved against the lens&rsquo;s real aperture range, and your original file is never touched.</p>
+          <span class="box__link"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> arditbe/ReShoot</span>
+        </a>
+        <a class="box box--repo" href="https://github.com/arditbe/foryou-ai-engine" target="_blank" rel="noopener">
+          <h3 class="box__t">AINARA</h3>
+          <p class="box__meta">Python &middot; MySQL &middot; Redis &middot; Apache-2.0</p>
+          <p class="box__d">The recommendation engine behind Amaro Than&rsquo;s For You feed. A 14-dimension ranker scores every candidate post on the follow graph, watch time, text and visual interest match, trend velocity and author affinity, then applies a diversity pass so the feed does not collapse onto one author.</p>
+          <span class="box__link"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> arditbe/foryou-ai-engine</span>
+        </a>
+        <a class="box box--repo" href="https://github.com/arditbe/antinude" target="_blank" rel="noopener">
+          <h3 class="box__t">Anti-Nude Safe Guard</h3>
+          <p class="box__meta">Python &middot; Flask &middot; Apache-2.0</p>
+          <p class="box__d">A deliberately conservative NSFW detection API. It flags explicit nudity and sexual acts and ignores anything that is merely skin — bare torsos, swimwear, underwear — because in moderation the expensive mistake is the false positive. CPU-only, no CUDA required.</p>
+          <span class="box__link"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> arditbe/antinude</span>
+        </a>
+        <a class="box box--repo" href="https://github.com/arditbe/scrape-the-internet" target="_blank" rel="noopener">
+          <h3 class="box__t">Scrape the Internet</h3>
+          <p class="box__meta">Python &middot; Selenium</p>
+          <p class="box__d">Collects text across DuckDuckGo, Bing, Yandex and AOL and writes it straight out as JSONL, ready for fine-tuning. Built because the dataset is the part nobody hands you.</p>
+          <span class="box__link"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> arditbe/scrape-the-internet</span>
+        </a>
+      </div>
+
+      <p class="boxes__more">
+        <a class="btn" href="https://github.com/arditbe" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> All repositories</a>
+      </p>
+    </div>
+  </section>
+
+
+  <!-- ===================== SCALE ===================== -->
+  <section class="band" id="scale">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>The range I have trained across</h2>
+        <p>The bar is logarithmic — on a linear scale the first model would be invisible.</p>
+      </div>
+
+      <div id="ladder">
+        <div class="rung">
+          <div class="rung__n">01</div>
+          <div class="rung__size">20M<small>2022. My first model, on my own laptop</small></div>
+          <div class="rung__track"><div class="rung__bar" data-w="6"></div></div>
+          <div class="rung__cost">10,000 samples<br>from scratch</div>
+        </div>
+        <div class="rung">
+          <div class="rung__n">02</div>
+          <div class="rung__size">12B<small>NVIDIA GPUs, Google Cloud</small></div>
+          <div class="rung__track"><div class="rung__bar" data-w="62"></div></div>
+          <div class="rung__cost">≈240B tokens</div>
+        </div>
+        <div class="rung rung--now">
+          <div class="rung__n">03</div>
+          <div class="rung__size">32B<small>Largest I have trained</small></div>
+          <div class="rung__track"><div class="rung__bar" data-w="70"></div></div>
+          <div class="rung__cost">≈640B tokens</div>
+        </div>
+        <div class="rung rung--goal">
+          <div class="rung__n">04</div>
+          <div class="rung__size">1T<small>The goal, not a claim</small></div>
+          <div class="rung__track"><div class="rung__bar" data-w="100"></div></div>
+          <div class="rung__cost">≈20T tokens</div>
+        </div>
+      </div>
+
+      <p class="note">
+        The 20M model from 2022 still matters to me more than the 32B one. Scale changed
+        the hardware bill. It did not change the method.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===================== CONTACT ===================== -->
+  <section class="band band--plate contact" id="contact">
+    <div class="wrap">
+      <h2>Let's build something that runs everywhere.</h2>
+      <p>
+        Open to research collaboration, compute partnerships, and anything that has to
+        survive contact with real people's devices.
+      </p>
+      <div class="links">
+        <a class="btn btn--solid" href="https://www.linkedin.com/in/ardit-berishaa1/" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="btn" href="https://github.com/arditbe" target="_blank" rel="noopener">github.com/arditbe</a>
+        <a class="btn" href="https://www.instagram.com/ardit.berishaa1/" target="_blank" rel="noopener">Instagram</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="wrap">
+    <span>Ardit Berisha — Grow Labs</span>
+    <span>Figures from my own training runs, 2022 to 2026</span>
+  </footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var root = document.documentElement;
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- opening sequence, then the hero ---------- */
+  // Shown under the name on the opening card.
+  var BORN = "Born 6 February 2006";
+
+  (function opening(){
+    var intro   = document.getElementById("intro");
+    var fig     = document.getElementById("introFig");
+    var bornEl  = document.getElementById("introBorn");
+    var target  = document.querySelector(".hero__portrait");
+
+    function reveal(){ root.classList.add("is-ready"); }
+
+    if (BORN && bornEl){ bornEl.textContent = BORN; bornEl.hidden = false; }
+
+    if (reduced || !intro || !fig || !target || typeof fig.animate !== "function"){
+      if (intro) intro.remove();
+      reveal();
+      return;
+    }
+
+    root.classList.add("is-motion");
+    intro.hidden = false;
+    target.classList.add("is-waiting");
+    var prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.scrollTo(0, 0);
+
+    // size the opening photo to the hero slot's aspect, so the flight is a clean scale
+    var to = target.getBoundingClientRect();
+    var ratio = to.height / to.width;
+    var w = Math.min(300, window.innerWidth * 0.58, (window.innerHeight * 0.52) / ratio);
+    fig.style.width  = w + "px";
+    fig.style.height = (w * ratio) + "px";
+
+    var text = intro.querySelectorAll(".intro__name, .intro__born");
+
+    // 1. the card arrives
+    fig.animate(
+      [{opacity:0, transform:"scale(.94)"}, {opacity:1, transform:"scale(1)"}],
+      {duration:760, easing:"cubic-bezier(.16,1,.3,1)", fill:"both"}
+    );
+    text.forEach(function(el, i){
+      el.animate(
+        [{opacity:0, transform:"translateY(12px)"}, {opacity:1, transform:"none"}],
+        {duration:700, delay:260 + i*90, easing:"cubic-bezier(.16,1,.3,1)", fill:"both"}
+      );
+    });
+
+    // 2. it holds, then flies to its place in the hero
+    setTimeout(function(){
+      var from = fig.getBoundingClientRect();
+      var now  = target.getBoundingClientRect();
+      var sc = now.width / from.width;
+      var dx = (now.left + now.width / 2) - (from.left + from.width / 2);
+      var dy = (now.top + now.height / 2) - (from.top + from.height / 2);
+
+      text.forEach(function(el){
+        el.animate([{opacity:1}, {opacity:0, transform:"translateY(-8px)"}],
+          {duration:420, easing:"cubic-bezier(.16,1,.3,1)", fill:"both"});
+      });
+
+      var flight = fig.animate(
+        [{transform:"none"},
+         {transform:"translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px) scale(" + sc.toFixed(4) + ")"}],
+        {duration:920, easing:"cubic-bezier(.16,1,.3,1)", fill:"both"}
+      );
+
+      intro.animate([{opacity:1}, {opacity:0}],
+        {duration:420, delay:520, easing:"linear", fill:"both"});
+
+      // hand the photo back to the hero a beat before the overlay clears
+      setTimeout(function(){
+        target.classList.remove("is-waiting");
+        reveal();
+      }, 700);
+
+      flight.finished.then(done, done);
+      function done(){
+        intro.remove();
+        document.body.style.overflow = prevOverflow;
+      }
+    }, 1450);
+
+    // never leave the page stuck behind the overlay
+    setTimeout(function(){
+      if (document.getElementById("intro")) {
+        intro.remove();
+        target.classList.remove("is-waiting");
+        document.body.style.overflow = prevOverflow;
+        reveal();
+      }
+    }, 5000);
+  })();
+
+  /* ---------- the circuit background ---------- */
+  (function trace(){
+    var cv = document.getElementById("trace");
+    if (!cv) return;
+    var c = cv.getContext("2d");
+    var G = 46, DPR = 1, W = 0, H = 0, riders = [], raf = null;
+
+    function hex(name, fallback){
+      var v = getComputedStyle(root).getPropertyValue(name).trim();
+      var m = /^#([0-9a-f]{6})$/i.exec(v);
+      if (!m) return fallback;
+      var n = parseInt(m[1], 16);
+      return [n >> 16 & 255, n >> 8 & 255, n & 255];
+    }
+    var ground = [8,12,21], inkA = [84,128,255], inkB = [140,173,255], ember = [255,122,47];
+    function readTheme(){
+      ground = hex("--ground", ground);
+      inkA   = hex("--accent", inkA);
+      inkB   = hex("--accent-2", inkB);
+      ember  = hex("--ember", ember);
+      // on a light ground the traces need to be darker than the paper, not brighter
+      light = (ground[0] + ground[1] + ground[2]) / 3 > 140;
+    }
+    var light = false;
+
+    function Rider(){ this.reset(true); }
+    Rider.prototype.reset = function(anywhere){
+      var cols = Math.max(2, Math.round(W / G)), rows = Math.max(2, Math.round(H / G));
+      if (anywhere){
+        this.x = Math.round(Math.random() * cols) * G;
+        this.y = Math.round(Math.random() * rows) * G;
+      } else {
+        // enter from an edge so the field keeps refilling
+        if (Math.random() < 0.5){
+          this.x = Math.random() < 0.5 ? 0 : cols * G;
+          this.y = Math.round(Math.random() * rows) * G;
+        } else {
+          this.x = Math.round(Math.random() * cols) * G;
+          this.y = Math.random() < 0.5 ? 0 : rows * G;
+        }
+      }
+      this.d = Math.floor(Math.random() * 4);
+      this.spd = 0.55 + Math.random() * 1.15;
+      // mostly blue, with a minority of orange riders running against them
+      var r = Math.random();
+      if (r < 0.22){ this.tone = ember; this.a = 0.34 + Math.random() * 0.30; }
+      else if (r < 0.52){ this.tone = inkB; this.a = 0.28 + Math.random() * 0.32; }
+      else { this.tone = inkA; this.a = 0.30 + Math.random() * 0.34; }
+      this.retarget();
+    };
+    var DIRS = [[1,0],[0,1],[-1,0],[0,-1]];
+    Rider.prototype.retarget = function(){
+      this.tx = this.x + DIRS[this.d][0] * G;
+      this.ty = this.y + DIRS[this.d][1] * G;
+    };
+    Rider.prototype.step = function(){
+      var px = this.x, py = this.y;
+      var dx = this.tx - this.x, dy = this.ty - this.y;
+      var dist = Math.abs(dx) + Math.abs(dy);
+      if (dist <= this.spd){
+        this.x = this.tx; this.y = this.ty;
+        // at an intersection: mostly carry on, sometimes take a corner
+        if (Math.random() < 0.34) this.d = (this.d + (Math.random() < 0.5 ? 1 : 3)) % 4;
+        this.retarget();
+      } else {
+        this.x += Math.sign(dx) * this.spd;
+        this.y += Math.sign(dy) * this.spd;
+      }
+      if (this.x < -G || this.x > W + G || this.y < -G || this.y > H + G){
+        this.reset(false);
+        return;
+      }
+      var t = this.tone;
+      c.strokeStyle = "rgba(" + t[0] + "," + t[1] + "," + t[2] + "," + this.a.toFixed(3) + ")";
+      c.lineWidth = 1;
+      c.beginPath();
+      c.moveTo(px + 0.5, py + 0.5);
+      c.lineTo(this.x + 0.5, this.y + 0.5);
+      c.stroke();
+      // the head, brighter than its tail
+      c.fillStyle = "rgba(" + t[0] + "," + t[1] + "," + t[2] + "," + Math.min(1, this.a * 2.1).toFixed(3) + ")";
+      c.fillRect(this.x - 1, this.y - 1, 2.5, 2.5);
+    };
+
+    function size(){
+      DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+      W = window.innerWidth; H = window.innerHeight;
+      cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+      c.setTransform(DPR, 0, 0, DPR, 0, 0);
+      c.clearRect(0, 0, W, H);
+      var want = Math.max(9, Math.min(26, Math.round(W * H / 74000)));
+      riders = [];
+      for (var i = 0; i < want; i++) riders.push(new Rider());
+    }
+
+    function frame(){
+      // fade the previous frame toward the page ground: this is the trail decay
+      c.fillStyle = "rgba(" + ground[0] + "," + ground[1] + "," + ground[2] + ",0.055)";
+      c.fillRect(0, 0, W, H);
+      for (var i = 0; i < riders.length; i++) riders[i].step();
+      raf = requestAnimationFrame(frame);
+    }
+
+    function start(){ if (!raf) raf = requestAnimationFrame(frame); }
+    function stop(){ if (raf){ cancelAnimationFrame(raf); raf = null; } }
+
+    function staticGrid(){
+      c.clearRect(0, 0, W, H);
+      c.strokeStyle = "rgba(" + inkA[0] + "," + inkA[1] + "," + inkA[2] + ",0.07)";
+      c.lineWidth = 1;
+      for (var x = 0; x <= W; x += G){
+        c.beginPath(); c.moveTo(x + .5, 0); c.lineTo(x + .5, H); c.stroke();
+      }
+      for (var y = 0; y <= H; y += G){
+        c.beginPath(); c.moveTo(0, y + .5); c.lineTo(W, y + .5); c.stroke();
+      }
+    }
+
+    function boot(){
+      readTheme();
+      size();
+      cv.style.opacity = light ? "0.55" : "1";
+      if (reduced){ staticGrid(); return; }
+      start();
+    }
+    boot();
+
+    var rz;
+    window.addEventListener("resize", function(){
+      clearTimeout(rz);
+      rz = setTimeout(function(){ stop(); boot(); }, 180);
+    });
+    document.addEventListener("visibilitychange", function(){
+      if (reduced) return;
+      if (document.hidden) stop(); else start();
+    });
+    function themeChanged(){ stop(); boot(); }
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", themeChanged);
+    new MutationObserver(themeChanged).observe(root, {attributes:true, attributeFilter:["data-theme"]});
+  })();
+
+  /* ---------- scroll progress ---------- */
+  var fill = document.getElementById("progress"), tick = false;
+  function prog(){
+    if (tick) return; tick = true;
+    requestAnimationFrame(function(){
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      fill.style.width = (h > 0 ? Math.min(1, Math.max(0, window.scrollY / h)) * 100 : 0).toFixed(2) + "%";
+      tick = false;
+    });
+  }
+  window.addEventListener("scroll", prog, {passive:true});
+  window.addEventListener("resize", prog);
+  prog();
+
+  /* ---------- nav follows the section you are reading ---------- */
+  (function spy(){
+    var links = [].slice.call(document.querySelectorAll(".masthead__nav a[href^='#']"));
+    if (!links.length || !("IntersectionObserver" in window)) return;
+    var map = {};
+    links.forEach(function(a){
+      var el = document.getElementById(a.getAttribute("href").slice(1));
+      if (el) map[el.id] = a;
+    });
+    var ids = Object.keys(map);
+    if (!ids.length) return;
+    var visible = {};
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ visible[e.target.id] = e.isIntersecting; });
+      var current = null;
+      for (var i = 0; i < ids.length; i++) if (visible[ids[i]]) { current = ids[i]; break; }
+      links.forEach(function(a){ a.classList.remove("on"); });
+      if (current) map[current].classList.add("on");
+    }, {rootMargin:"-46% 0px -50% 0px", threshold:0});
+    ids.forEach(function(id){ io.observe(document.getElementById(id)); });
+  })();
+
+  /* ---------- ladder bars ---------- */
+  var bars = [].slice.call(document.querySelectorAll(".rung__bar"));
+  function fillBars(){ bars.forEach(function(b){ b.style.width = b.getAttribute("data-w") + "%"; }); }
+  if (reduced || !("IntersectionObserver" in window)) {
+    fillBars();
+  } else {
+    bars.forEach(function(b,i){
+      b.style.width = "0%";
+      b.style.transition = "width 1.1s var(--ease) " + (i * 0.11) + "s";
+    });
+    var lio = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if (e.isIntersecting){ fillBars(); lio.disconnect(); } });
+    }, {threshold:0.3});
+    lio.observe(document.getElementById("ladder"));
+  }
+
+  /* ---------- influences: pinned cross-dissolve with parallax ---------- */
+  var infl   = document.getElementById("influences");
+  var scroll = document.getElementById("inflScroll");
+  var scenes = [].slice.call(document.querySelectorAll("#scenes .scene"));
+  var ticks  = [].slice.call(document.querySelectorAll(".infl__tick"));
+  var count  = document.getElementById("inflCount");
+  var N = scenes.length, live = false, shown = -1, queued = false;
+
+  function pad(n){ return (n < 10 ? "0" : "") + n; }
+
+  function goLive(){
+    if (live) return;
+    live = true;
+    infl.classList.add("infl--live");
+    scroll.style.height = (N * 85 + 15) + "vh";
+    frame();
+  }
+  function goStatic(){
+    if (!live) return;
+    live = false;
+    infl.classList.remove("infl--live");
+    scroll.style.height = "";
+    scenes.forEach(function(s){
+      s.style.opacity = ""; s.style.zIndex = ""; s.style.pointerEvents = "";
+      s.querySelector(".scene__fig img").style.transform = "";
+      s.querySelector(".scene__text").style.transform = "";
+    });
+  }
+
+  function frame(){
+    queued = false;
+    if (!live) return;
+    var r = scroll.getBoundingClientRect();
+    var total = r.height - window.innerHeight;
+    var p = total > 0 ? Math.min(1, Math.max(0, -r.top / total)) : 0;
+    var t = p * (N - 1);
+
+    scenes.forEach(function(s, i){
+      var d = t - i;                       // <0 upcoming, >0 already passed
+      var ad = Math.abs(d);
+      var op = ad >= 1 ? 0 : 1 - ad;
+      op = op * op * (3 - 2 * op);         // smoothstep, so the swap is not linear
+      s.style.opacity = op.toFixed(3);
+      s.style.zIndex = String(50 - Math.round(ad * 10));
+      s.style.pointerEvents = ad < 0.5 ? "auto" : "none";
+      if (ad < 1.2) {
+        var img = s.querySelector(".scene__fig img");
+        var txt = s.querySelector(".scene__text");
+        img.style.transform = "translate3d(0," + (d * -58).toFixed(1) + "px,0) scale(" + (1 + (1 - Math.min(ad,1)) * 0.03).toFixed(4) + ")";
+        txt.style.transform = "translate3d(0," + (d * -26).toFixed(1) + "px,0)";
+      }
+    });
+
+    var active = Math.max(0, Math.min(N - 1, Math.round(t)));
+    if (active !== shown){
+      shown = active;
+      ticks.forEach(function(tk, i){ tk.classList.toggle("on", i === active); });
+      count.textContent = pad(active + 1) + " / " + pad(N);
+    }
+  }
+
+  function decide(){
+    if (reduced || window.innerWidth < 860) goStatic(); else goLive();
+  }
+  decide();
+  window.addEventListener("scroll", function(){
+    if (live && !queued){ queued = true; requestAnimationFrame(frame); }
+  }, {passive:true});
+  var ot;
+  window.addEventListener("resize", function(){
+    clearTimeout(ot);
+    ot = setTimeout(function(){ goStatic(); decide(); }, 140);
+  });
+
+  /* ---------- loss plot ---------- */
+  var canvas = document.getElementById("lossPlot");
+  var ctx = canvas.getContext("2d");
+  var RUNS = [
+    {label:"small set", sub:"early phase", gap:2.90, approx:true},
+    {label:"5,000",     sub:"samples",     gap:0.5788},
+    {label:"10,000",    sub:"samples",     gap:0.1851}
+  ];
+  var Y_MAX = 3.2, THRESH = 1.0, drawn = false;
+  function tok(n){ return getComputedStyle(root).getPropertyValue(n).trim(); }
+
+  function draw(){
+    var r = canvas.getBoundingClientRect();
+    if (r.width < 5) return;                 // inside a closed <details>
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = r.width, h = w * (10/16);
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.height = h + "px";
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+
+    var padL=42,padR=18,padT=16,padB=42;
+    var pw=w-padL-padR, ph=h-padT-padB;
+    var t3=tok("--text-3"), rule=tok("--rule"), acc=tok("--accent"), gr=tok("--ground-2"), tx=tok("--text");
+    var X=function(i){return padL+pw*(i/(RUNS.length-1));};
+    var Y=function(v){return padT+ph-ph*(v/Y_MAX);};
+
+    ctx.clearRect(0,0,w,h);
+    ctx.font='400 10px "JetBrains Mono", monospace'; ctx.textBaseline="middle";
+
+    [0,1,2,3].forEach(function(v){
+      var y=Y(v);
+      ctx.strokeStyle=rule; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(padL,Math.round(y)+0.5); ctx.lineTo(padL+pw,Math.round(y)+0.5); ctx.stroke();
+      ctx.fillStyle=t3; ctx.textAlign="right"; ctx.fillText(v.toFixed(1),padL-9,y);
+    });
+
+    ctx.save(); ctx.setLineDash([3,4]); ctx.strokeStyle=t3; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(padL,Math.round(Y(THRESH))+0.5); ctx.lineTo(padL+pw,Math.round(Y(THRESH))+0.5); ctx.stroke();
+    ctx.restore();
+    ctx.fillStyle=t3; ctx.textAlign="left"; ctx.fillText("generalisation threshold",padL+6,Y(THRESH)-11);
+
+    var pts=RUNS.map(function(rr,i){return {x:X(i),y:Y(rr.gap)};});
+    ctx.strokeStyle=acc; ctx.lineWidth=2; ctx.lineJoin="round"; ctx.lineCap="round";
+    ctx.beginPath(); ctx.moveTo(pts[0].x,pts[0].y);
+    for (var i=0;i<pts.length-1;i++){
+      var a=pts[i],b=pts[i+1],cxm=(a.x+b.x)/2;
+      ctx.bezierCurveTo(cxm,a.y,cxm,b.y,b.x,b.y);
+    }
+    ctx.stroke();
+
+    pts.forEach(function(p,i){
+      var rr=RUNS[i];
+      ctx.fillStyle=gr; ctx.strokeStyle=acc; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(p.x,p.y,4,0,Math.PI*2); ctx.fill(); ctx.stroke();
+      var al = i===0?"left":(i===pts.length-1?"right":"center");
+      var dx = i===0?9:(i===pts.length-1?-9:0);
+      ctx.fillStyle=tx; ctx.font='500 11px "JetBrains Mono", monospace'; ctx.textAlign=al;
+      ctx.fillText(rr.approx?"2.9+":rr.gap.toFixed(4),p.x+dx,p.y-14);
+      ctx.fillStyle=t3; ctx.font='400 10px "JetBrains Mono", monospace';
+      var lx = i===0?padL:(i===pts.length-1?padL+pw:p.x);
+      ctx.fillText(rr.label,lx,padT+ph+16);
+      ctx.fillText(rr.sub,lx,padT+ph+29);
+    });
+    drawn = true;
+  }
+
+  // the plot lives inside an open <details>; redraw when one is toggled
+  [].slice.call(document.querySelectorAll("details.disc")).forEach(function(d){
+    d.addEventListener("toggle", function(){ if (d.open) requestAnimationFrame(draw); });
+  });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
+  draw();
+  var dt;
+  window.addEventListener("resize", function(){ clearTimeout(dt); dt=setTimeout(draw,140); });
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
+  new MutationObserver(draw).observe(root,{attributes:true,attributeFilter:["data-theme"]});
+})();
+</script>
+
+</html>
